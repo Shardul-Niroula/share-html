@@ -1,0 +1,168 @@
+.editor-pane-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-main);
+  border-right: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.editor-tabs-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 8px;
+  height: 42px;
+}
+
+.editor-tabs-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.editor-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s ease;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.editor-tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-elevated);
+}
+
+.editor-tab-btn.active {
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--primary-accent);
+  background-color: var(--bg-surface-elevated);
+  font-weight: 600;
+}
+
+.lang-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.lang-dot-html { background-color: var(--html-color); }
+.lang-dot-css { background-color: #38bdf8; }
+.lang-dot-js { background-color: var(--js-color); }
+
+.editor-tools-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+}
+
+.editor-tool-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-hover);
+}
+
+.editor-content-area {
+  flex: 1;
+  height: calc(100% - 42px);
+  position: relative;
+  overflow: hidden;
+}
+
+.editor-single-view {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.editor-split-view {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  height: 100%;
+  width: 100%;
+  gap: 1px;
+  background-color: var(--border-subtle);
+  overflow: hidden;
+}
+
+.split-section {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-main);
+  overflow: hidden;
+}
+
+.split-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.split-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.split-editor-body {
+  flex: 1;
+  overflow: auto;
+}
+
+/* CodeMirror customization */
+.cm-theme {
+  height: 100% !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+}
+
+.cm-editor {
+  height: 100% !important;
+  background-color: #0d1117 !important;
+}
+
+.cm-scroller {
+  font-family: var(--font-mono) !important;
+  overflow: auto !important;
+}
+
+.cm-gutters {
+  background-color: #0d1117 !important;
+  border-right: 1px solid #21262d !important;
+  color: #484f58 !important;
+}
+
+.cm-activeLineGutter {
+  background-color: #161b22 !important;
+  color: #c9d1d9 !important;
+}
+
+.cm-activeLine {
+  background-color: rgba(56, 139, 253, 0.08) !important;
+}

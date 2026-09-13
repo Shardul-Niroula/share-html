@@ -1,0 +1,76 @@
+.editor-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg-main);
+}
+
+.editor-main-workspace {
+  flex: 1;
+  display: flex;
+  height: calc(100vh - 58px);
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.workspace-pane-editor {
+  height: 100%;
+  overflow: hidden;
+  transition: width 0.05s ease;
+}
+
+.workspace-pane-preview {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.workspace-resizer {
+  width: 6px;
+  height: 100%;
+  background-color: var(--border-subtle);
+  cursor: col-resize;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.15s ease;
+  z-index: 10;
+}
+
+.workspace-resizer:hover,
+.workspace-resizer:active {
+  background-color: var(--primary-accent);
+}
+
+.workspace-resizer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+  background-color: var(--text-muted);
+  border-radius: 2px;
+}
+
+@media (max-width: 860px) {
+  .editor-main-workspace {
+    flex-direction: column;
+  }
+  .workspace-pane-editor {
+    width: 100% !important;
+    height: 50%;
+  }
+  .workspace-pane-preview {
+    width: 100%;
+    height: 50%;
+  }
+  .workspace-resizer {
+    width: 100%;
+    height: 6px;
+    cursor: row-resize;
+  }
+}
