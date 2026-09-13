@@ -42,6 +42,7 @@ export const EditorPage: React.FC = () => {
     myPreviews,
     generatePreview,
     revokePreview,
+    clearActiveBundle,
   } = usePreviewBundle();
 
   // Modals state
@@ -82,7 +83,13 @@ export const EditorPage: React.FC = () => {
       showToast(`Project "${project.title}" saved before creating a new one`, 'info');
     }
     createNewProject();
+    clearActiveBundle();
     showToast('Created a new HTML/CSS/JS project', 'success');
+  };
+
+  const handleLoadProject = (targetProject: typeof project) => {
+    loadProject(targetProject);
+    clearActiveBundle();
   };
 
   const handleOpenShare = () => {
@@ -232,8 +239,8 @@ export const EditorPage: React.FC = () => {
         onClose={() => setSnippetsDrawerOpen(false)}
         savedProjects={savedProjects}
         currentProjectId={project.id}
-        onLoadProject={loadProject}
-        onNewProject={createNewProject}
+        onLoadProject={handleLoadProject}
+        onNewProject={handleNewProject}
         onDeleteProject={deleteProject}
         myPreviews={myPreviews}
         onRevokePreview={revokePreview}
@@ -261,7 +268,10 @@ export const EditorPage: React.FC = () => {
       <TemplatesModal
         isOpen={templatesModalOpen}
         onClose={() => setTemplatesModalOpen(false)}
-        onSelectTemplate={loadTemplate}
+        onSelectTemplate={(template) => {
+          loadTemplate(template);
+          clearActiveBundle();
+        }}
         onShowToast={showToast}
       />
 
