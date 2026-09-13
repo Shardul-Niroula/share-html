@@ -5,24 +5,26 @@
 .auth-tabs {
   display: flex;
   background-color: var(--bg-main);
-  border-bottom: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
 }
 
 .auth-tab-btn {
   flex: 1;
-  padding: 12px;
+  padding: 8px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
-  border-bottom: 2px solid transparent;
   text-align: center;
+  border-radius: var(--radius-sm);
   transition: all 0.15s ease;
 }
 
 .auth-tab-btn.active {
   color: var(--text-primary);
-  border-bottom-color: var(--primary-accent);
-  background-color: var(--bg-surface);
+  background-color: var(--bg-surface-elevated);
 }
 
 .auth-form {
@@ -74,6 +76,12 @@
 
 .auth-submit-btn:hover {
   opacity: 0.92;
+}
+
+.auth-submit-btn:disabled,
+.guest-login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .guest-option-divider {

@@ -7,7 +7,8 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   user: UserAccount | null;
-  onLogin: (name: string, email: string) => UserAccount;
+  onSignUp: (name: string, email: string, password: string) => Promise<void>;
+  onSignIn: (email: string, password: string) => Promise<void>;
   onLogout: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
@@ -16,32 +17,58 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   user,
-  onLogin,
+  onSignUp,
+  onSignIn,
   onLogout,
   onShowToast,
 }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [mode, setMode] = useState<'signin' | 'register'>('signin');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) {
-      onShowToast('Please enter an email address', 'error');
+    if (!email || !password) {
+      onShowToast('Please enter your email and password', 'error');
       return;
     }
-    const loggedUser = onLogin(name || 'Developer', email);
-    onShowToast(`Welcome back, ${loggedUser.name}!`, 'success');
-    onClose();
+
+    setIsSubmitting(true);
+    try {
+      if (mode === 'register') {
+        await onSignUp(name, email, password);
+        onShowToast('Account created! You are now signed in.', 'success');
+      } else {
+        await onSignIn(email, password);
+        onShowToast('Welcome back!', 'success');
+      }
+      onClose();
+    } catch (err: any) {
+      onShowToast(err?.message || 'Authentication failed. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = async () => {
     const randomId = Math.floor(1000 + Math.random() * 9000);
-    const guestUser = onLogin(`Dev User #${randomId}`, `dev.${randomId}@sandbox.local`);
-    onShowToast(`Signed in as guest: ${guestUser.name}`, 'success');
-    onClose();
+    const guestEmail = `dev.${randomId}.${Date.now()}@sandbox.local`;
+    const guestPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+
+    setIsSubmitting(true);
+    try {
+      await onSignUp(`Dev User #${randomId}`, guestEmail, guestPassword);
+      onShowToast(`Signed in as guest: Dev User #${randomId}`, 'success');
+      onClose();
+    } catch (err: any) {
+      onShowToast(err?.message || 'Could not create a guest session.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,18 +115,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           ) : (
             <>
+              <div className="auth-tabs">
+                <button
+                  type="button"
+                  className={`auth-tab-btn ${mode === 'signin' ? 'active' : ''}`}
+                  onClick={() => setMode('signin')}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  className={`auth-tab-btn ${mode === 'register' ? 'active' : ''}`}
+                  onClick={() => setMode('register')}
+                >
+                  Register
+                </button>
+              </div>
+
               <form className="auth-form" onSubmit={handleSubmit} id="auth-form">
-                <div className="auth-input-group">
-                  <label htmlFor="auth-name-input">Display Name</label>
-                  <input
-                    id="auth-name-input"
-                    className="auth-input"
-                    type="text"
-                    placeholder="e.g. Alex Morgan"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
+                {mode === 'register' && (
+                  <div className="auth-input-group">
+                    <label htmlFor="auth-name-input">Display Name</label>
+                    <input
+                      id="auth-name-input"
+                      className="auth-input"
+                      type="text"
+                      placeholder="e.g. Alex Morgan"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                )}
 
                 <div className="auth-input-group">
                   <label htmlFor="auth-email-input">Email Address</label>
@@ -114,9 +160,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   />
                 </div>
 
-                <button id="auth-submit-btn" type="submit" className="auth-submit-btn">
+                <div className="auth-input-group">
+                  <label htmlFor="auth-password-input">Password</label>
+                  <input
+                    id="auth-password-input"
+                    className="auth-input"
+                    type="password"
+                    placeholder="••••••••"
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+
+                <button id="auth-submit-btn" type="submit" className="auth-submit-btn" disabled={isSubmitting}>
                   <LogIn size={15} />
-                  <span>Sign In & Enable Code Sharing</span>
+                  <span>{isSubmitting ? 'Please wait…' : mode === 'register' ? 'Create Account' : 'Sign In'}</span>
                 </button>
               </form>
 
@@ -128,6 +188,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 id="guest-login-quick-btn"
                 className="guest-login-btn"
                 type="button"
+                disabled={isSubmitting}
                 onClick={handleGuestLogin}
               >
                 <Sparkles size={14} color="#38bdf8" />

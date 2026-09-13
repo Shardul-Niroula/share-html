@@ -15,7 +15,7 @@ import { ExpiryRule } from '../types/types';
 import './EditorPage.css';
 
 export const EditorPage: React.FC = () => {
-  const { user, login, logout } = useAuth();
+  const { user, signUp, signIn, logout } = useAuth();
   const {
     project,
     activeTab,
@@ -235,7 +235,8 @@ export const EditorPage: React.FC = () => {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         user={user}
-        onLogin={login}
+        onSignUp={signUp}
+        onSignIn={signIn}
         onLogout={logout}
         onShowToast={showToast}
       />
