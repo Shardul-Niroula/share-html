@@ -1,4 +1,4 @@
-# CodeSnippet Sandbox & Secure Previewer
+# ShareHtml Sandbox & Secure Previewer
 
 Write and preview HTML, CSS, and JS code in an isolated sandbox, with instant shareable preview links, custom expiry rules, and security enforcement.
 

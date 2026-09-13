@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Code2,
   Share2,
   Save,
   FolderOpen,
@@ -15,6 +14,34 @@ import {
 } from 'lucide-react';
 import { ViewMode, UserAccount } from '../types/types';
 import './Header.css';
+
+const BrandMark: React.FC<{ size?: number }> = ({ size = 20 }) => {
+  const uid = React.useId().replace(/:/g, '');
+  return (
+    <svg width={size * 1.4} height={size} viewBox="0 0 56 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={`bracketGrad-${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#1d4ed8" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+        <linearGradient id={`signalGrad-${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#22d3ee" />
+        </linearGradient>
+      </defs>
+
+      {/* code tag brackets: < > */}
+      <path d="M20 10 L12 20 L20 30" stroke={`url(#bracketGrad-${uid})`} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M36 10 L44 20 L36 30" stroke={`url(#bracketGrad-${uid})`} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* wireless signal, radiating outward from each bracket tip */}
+      <path d="M8.17 16.85 A5 5 0 0 0 8.17 23.15" stroke={`url(#signalGrad-${uid})`} strokeWidth="2.1" strokeLinecap="round" opacity="0.95" />
+      <path d="M5.49 14.53 A8.5 8.5 0 0 0 5.49 25.47" stroke={`url(#signalGrad-${uid})`} strokeWidth="2.1" strokeLinecap="round" opacity="0.6" />
+      <path d="M47.83 16.85 A5 5 0 0 1 47.83 23.15" stroke={`url(#signalGrad-${uid})`} strokeWidth="2.1" strokeLinecap="round" opacity="0.95" />
+      <path d="M50.51 14.53 A8.5 8.5 0 0 1 50.51 25.47" stroke={`url(#signalGrad-${uid})`} strokeWidth="2.1" strokeLinecap="round" opacity="0.6" />
+    </svg>
+  );
+};
 
 interface HeaderProps {
   title: string;
@@ -52,9 +79,9 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="header-left-section">
         <div className="brand-logo" id="brand-logo">
           <div className="brand-icon-wrapper">
-            <Code2 size={18} />
+            <BrandMark size={20} />
           </div>
-          <span>CodeSnippet</span>
+          <span>ShareHtml</span>
         </div>
 
         <button

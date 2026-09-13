@@ -30,11 +30,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
-  color: #ffffff;
 }
 
 .new-project-icon-btn {

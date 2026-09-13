@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 40" width="56" height="40">
+  <defs>
+    <linearGradient id="bracketGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+    <linearGradient id="signalGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#22d3ee" />
+    </linearGradient>
+  </defs>
+
+  <!-- code tag brackets: < > -->
+  <path d="M20 10 L12 20 L20 30" fill="none" stroke="url(#bracketGrad)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M36 10 L44 20 L36 30" fill="none" stroke="url(#bracketGrad)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- wireless signal, radiating outward from each bracket tip -->
+  <path d="M8.17 16.85 A5 5 0 0 0 8.17 23.15" fill="none" stroke="url(#signalGrad)" stroke-width="2.1" stroke-linecap="round" opacity="0.95" />
+  <path d="M5.49 14.53 A8.5 8.5 0 0 0 5.49 25.47" fill="none" stroke="url(#signalGrad)" stroke-width="2.1" stroke-linecap="round" opacity="0.6" />
+
+  <path d="M47.83 16.85 A5 5 0 0 1 47.83 23.15" fill="none" stroke="url(#signalGrad)" stroke-width="2.1" stroke-linecap="round" opacity="0.95" />
+  <path d="M50.51 14.53 A8.5 8.5 0 0 1 50.51 25.47" fill="none" stroke="url(#signalGrad)" stroke-width="2.1" stroke-linecap="round" opacity="0.6" />
+</svg>
