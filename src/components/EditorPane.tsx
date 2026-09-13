@@ -35,7 +35,22 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
 }) => {
   const [copiedTab, setCopiedTab] = React.useState<string | null>(null);
   const [isClearMenuOpen, setIsClearMenuOpen] = React.useState(false);
+  const [isClearMenuPinned, setIsClearMenuPinned] = React.useState(false);
   const clearMenuRef = React.useRef<HTMLDivElement>(null);
+  const clearMenuCloseTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelClearMenuCloseTimeout = () => {
+    if (clearMenuCloseTimeoutRef.current) {
+      clearTimeout(clearMenuCloseTimeoutRef.current);
+      clearMenuCloseTimeoutRef.current = null;
+    }
+  };
+
+  const closeClearMenu = () => {
+    cancelClearMenuCloseTimeout();
+    setIsClearMenuPinned(false);
+    setIsClearMenuOpen(false);
+  };
 
   const handleCopy = (content: string, label: string) => {
     navigator.clipboard.writeText(content);
@@ -49,7 +64,7 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     if (tab === 'css') onCssChange('');
     if (tab === 'js') onJsChange('');
     onShowToast(`Cleared ${tab.toUpperCase()} editor`, 'info');
-    setIsClearMenuOpen(false);
+    closeClearMenu();
   };
 
   const handleClearAll = () => {
@@ -57,19 +72,23 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     onCssChange('');
     onJsChange('');
     onShowToast('Cleared HTML, CSS and JS editors', 'info');
-    setIsClearMenuOpen(false);
+    closeClearMenu();
   };
 
   React.useEffect(() => {
     if (!isClearMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (clearMenuRef.current && !clearMenuRef.current.contains(e.target as Node)) {
-        setIsClearMenuOpen(false);
+        closeClearMenu();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isClearMenuOpen]);
+
+  React.useEffect(() => {
+    return () => cancelClearMenuCloseTimeout();
+  }, []);
 
   return (
     <div className="editor-pane-container" id="editor-pane-container">
@@ -118,14 +137,30 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
               <div
                 className="clear-dropdown-wrapper"
                 ref={clearMenuRef}
-                onMouseEnter={() => setIsClearMenuOpen(true)}
-                onMouseLeave={() => setIsClearMenuOpen(false)}
+                onMouseEnter={() => {
+                  cancelClearMenuCloseTimeout();
+                  setIsClearMenuOpen(true);
+                }}
+                onMouseLeave={() => {
+                  if (isClearMenuPinned) return;
+                  cancelClearMenuCloseTimeout();
+                  clearMenuCloseTimeoutRef.current = setTimeout(() => {
+                    setIsClearMenuOpen(false);
+                  }, 200);
+                }}
               >
                 <button
                   id="clear-active-tab-button"
                   className="editor-tool-btn clear-trigger-btn"
                   title="Clear editor content"
-                  onClick={() => setIsClearMenuOpen((open) => !open)}
+                  onClick={() => {
+                    cancelClearMenuCloseTimeout();
+                    setIsClearMenuPinned((pinned) => {
+                      const nextPinned = !pinned;
+                      setIsClearMenuOpen(nextPinned);
+                      return nextPinned;
+                    });
+                  }}
                 >
                   <RotateCcw size={14} />
                   <ChevronDown size={11} className="clear-trigger-chevron" />

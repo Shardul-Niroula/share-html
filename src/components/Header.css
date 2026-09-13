@@ -37,6 +37,26 @@
   color: #ffffff;
 }
 
+.new-project-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.new-project-icon-btn:hover {
+  background-color: var(--primary-accent);
+  border-color: var(--primary-accent);
+  color: #ffffff;
+}
+
 .project-title-container {
   display: flex;
   align-items: center;

@@ -76,6 +76,15 @@ export const EditorPage: React.FC = () => {
     showToast(`Project "${project.title}" saved to your library!`, 'success');
   };
 
+  const handleNewProject = () => {
+    if (!isSaved) {
+      saveProject();
+      showToast(`Project "${project.title}" saved before creating a new one`, 'info');
+    }
+    createNewProject();
+    showToast('Created a new HTML/CSS/JS project', 'success');
+  };
+
   const handleOpenShare = () => {
     if (!user) {
       setAuthModalOpen(true);
@@ -144,6 +153,7 @@ export const EditorPage: React.FC = () => {
         onOpenAuthModal={() => setAuthModalOpen(true)}
         onOpenTemplatesModal={() => setTemplatesModalOpen(true)}
         onOpenSecurityModal={() => setSecurityModalOpen(true)}
+        onNewProject={handleNewProject}
       />
 
       <main className="editor-main-workspace" id="editor-main-workspace">

@@ -1,16 +1,17 @@
 import React from 'react';
-import { 
-  Code2, 
-  Share2, 
-  Save, 
-  FolderOpen, 
-  LayoutGrid, 
-  Columns, 
-  Sparkles, 
-  ShieldCheck, 
+import {
+  Code2,
+  Share2,
+  Save,
+  FolderOpen,
+  LayoutGrid,
+  Columns,
+  Sparkles,
+  ShieldCheck,
   UserCircle2,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 import { ViewMode, UserAccount } from '../types/types';
 import './Header.css';
@@ -28,6 +29,7 @@ interface HeaderProps {
   onOpenAuthModal: () => void;
   onOpenTemplatesModal: () => void;
   onOpenSecurityModal: () => void;
+  onNewProject: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -43,6 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuthModal,
   onOpenTemplatesModal,
   onOpenSecurityModal,
+  onNewProject,
 }) => {
   return (
     <header className="header-container" id="app-header">
@@ -53,6 +56,15 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <span>CodeSnippet</span>
         </div>
+
+        <button
+          id="new-project-button"
+          className="new-project-icon-btn"
+          onClick={onNewProject}
+          title="Create a new HTML/CSS/JS project (current project is saved first)"
+        >
+          <Plus size={16} />
+        </button>
 
         <div className="project-title-container">
           <input
