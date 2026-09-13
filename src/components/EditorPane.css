@@ -81,6 +81,66 @@
   background-color: var(--bg-surface-hover);
 }
 
+.clear-dropdown-wrapper {
+  position: relative;
+  display: flex;
+}
+
+.clear-trigger-btn {
+  width: auto;
+  padding: 0 4px 0 6px;
+  gap: 2px;
+}
+
+.clear-trigger-chevron {
+  opacity: 0.7;
+}
+
+.clear-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 190px;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 4px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.clear-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  text-align: left;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.clear-dropdown-item:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-hover);
+}
+
+.clear-dropdown-item-all {
+  color: var(--danger-accent);
+}
+
+.clear-dropdown-item-all:hover {
+  color: var(--danger-accent-hover);
+  background-color: rgba(248, 81, 73, 0.12);
+}
+
 .editor-content-area {
   flex: 1;
   height: calc(100% - 42px);

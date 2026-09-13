@@ -5,7 +5,7 @@ import { css as langCss } from '@codemirror/lang-css';
 import { javascript as langJs } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { ActiveTab, ViewMode } from '../types/types';
-import { Copy, RotateCcw, Check, Sparkles } from 'lucide-react';
+import { Copy, RotateCcw, Check, Sparkles, ChevronDown } from 'lucide-react';
 import './EditorPane.css';
 
 interface EditorPaneProps {
@@ -34,6 +34,8 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
   onShowToast,
 }) => {
   const [copiedTab, setCopiedTab] = React.useState<string | null>(null);
+  const [isClearMenuOpen, setIsClearMenuOpen] = React.useState(false);
+  const clearMenuRef = React.useRef<HTMLDivElement>(null);
 
   const handleCopy = (content: string, label: string) => {
     navigator.clipboard.writeText(content);
@@ -47,7 +49,27 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
     if (tab === 'css') onCssChange('');
     if (tab === 'js') onJsChange('');
     onShowToast(`Cleared ${tab.toUpperCase()} editor`, 'info');
+    setIsClearMenuOpen(false);
   };
+
+  const handleClearAll = () => {
+    onHtmlChange('');
+    onCssChange('');
+    onJsChange('');
+    onShowToast('Cleared HTML, CSS and JS editors', 'info');
+    setIsClearMenuOpen(false);
+  };
+
+  React.useEffect(() => {
+    if (!isClearMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (clearMenuRef.current && !clearMenuRef.current.contains(e.target as Node)) {
+        setIsClearMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isClearMenuOpen]);
 
   return (
     <div className="editor-pane-container" id="editor-pane-container">
@@ -93,14 +115,40 @@ export const EditorPane: React.FC<EditorPaneProps> = ({
               >
                 {copiedTab === activeTab.toUpperCase() ? <Check size={14} color="#3fb950" /> : <Copy size={14} />}
               </button>
-              <button
-                id="clear-active-tab-button"
-                className="editor-tool-btn"
-                title="Clear current editor content"
-                onClick={() => handleClear(activeTab)}
+              <div
+                className="clear-dropdown-wrapper"
+                ref={clearMenuRef}
+                onMouseEnter={() => setIsClearMenuOpen(true)}
+                onMouseLeave={() => setIsClearMenuOpen(false)}
               >
-                <RotateCcw size={14} />
-              </button>
+                <button
+                  id="clear-active-tab-button"
+                  className="editor-tool-btn clear-trigger-btn"
+                  title="Clear editor content"
+                  onClick={() => setIsClearMenuOpen((open) => !open)}
+                >
+                  <RotateCcw size={14} />
+                  <ChevronDown size={11} className="clear-trigger-chevron" />
+                </button>
+
+                {isClearMenuOpen && (
+                  <div className="clear-dropdown-menu" id="clear-dropdown-menu">
+                    <button
+                      className="clear-dropdown-item"
+                      onClick={() => handleClear(activeTab)}
+                    >
+                      <span className={`lang-dot lang-dot-${activeTab}`}></span>
+                      Clear current ({activeTab.toUpperCase()})
+                    </button>
+                    <button
+                      className="clear-dropdown-item clear-dropdown-item-all"
+                      onClick={handleClearAll}
+                    >
+                      Clear all (HTML, CSS, JS)
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
