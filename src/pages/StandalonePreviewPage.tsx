@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ApiService, GetPreviewResponse } from '../services/api';
 import { buildSandboxedDocument } from '../services/sanitizer';
 import { PreviewBundle } from '../types/types';
-import { ShieldCheck, Clock, AlertOctagon, Code, Eye, ExternalLink, Sparkles } from 'lucide-react';
+import { AlertOctagon, Sparkles } from 'lucide-react';
 import './StandalonePreviewPage.css';
 
 interface StandalonePreviewPageProps {
@@ -89,21 +89,6 @@ export const StandalonePreviewPage: React.FC<StandalonePreviewPageProps> = ({ pr
 
   return (
     <div className="standalone-preview-page" id="standalone-preview-page">
-      {/* Floating security banner */}
-      <div className="floating-preview-banner" id="floating-preview-banner">
-        <ShieldCheck size={16} className="banner-shield-icon" />
-        <span className="banner-title" title={bundle.title}>
-          {bundle.title}
-        </span>
-        <span className="banner-expiry-tag">
-          {bundle.isPermanent ? 'Permanent' : bundle.expiresAt ? `Expires ${new Date(bundle.expiresAt).toLocaleDateString()}` : 'Active'}
-        </span>
-        <a href="/" className="banner-create-btn" title="Open CodeSnippet Sandbox">
-          <span>Build Sandbox</span>
-          <ExternalLink size={10} />
-        </a>
-      </div>
-
       {/* Sandboxed iframe with strict sandbox attribute */}
       <iframe
         id="standalone-sandboxed-iframe"

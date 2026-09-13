@@ -16,62 +16,6 @@
   display: block;
 }
 
-/* Floating status pill for preview recipients */
-.floating-preview-banner {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  font-size: 12px;
-  color: var(--text-primary);
-  user-select: none;
-  transition: opacity 0.2s ease;
-}
-
-.banner-shield-icon {
-  color: var(--success-accent);
-}
-
-.banner-title {
-  font-weight: 600;
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.banner-expiry-tag {
-  color: var(--text-secondary);
-  font-size: 11px;
-}
-
-.banner-create-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background-color: var(--primary-accent);
-  color: #ffffff;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  font-size: 11px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 0.15s ease;
-}
-
-.banner-create-btn:hover {
-  background-color: var(--primary-accent-hover);
-}
-
 /* Expired / Error States */
 .expired-state-container {
   display: flex;
