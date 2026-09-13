@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { sql } from '../lib/db';
+import { sql } from '../lib/db.js';
 
 async function main() {
   await sql`

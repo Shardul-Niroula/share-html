@@ -8,7 +8,7 @@ import {
   deletePreview,
   getPreviewsByAuthor,
   countActivePreviews,
-} from './db';
+} from './db.js';
 
 const app = express();
 
