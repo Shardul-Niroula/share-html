@@ -15,11 +15,16 @@ async function main() {
       author_id TEXT,
       author_name TEXT,
       view_count INTEGER NOT NULL DEFAULT 0,
-      is_permanent BOOLEAN NOT NULL DEFAULT FALSE
+      is_permanent BOOLEAN NOT NULL DEFAULT FALSE,
+      project_id TEXT
     )
   `;
 
+  // Backfill column for databases created before project_id existed.
+  await sql`ALTER TABLE previews ADD COLUMN IF NOT EXISTS project_id TEXT`;
+
   await sql`CREATE INDEX IF NOT EXISTS previews_author_id_idx ON previews (author_id)`;
+  await sql`CREATE INDEX IF NOT EXISTS previews_project_id_idx ON previews (project_id)`;
 
   console.log('Database schema is ready: "previews" table exists.');
 }

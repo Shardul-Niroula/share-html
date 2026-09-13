@@ -49,6 +49,7 @@ export interface StoredPreviewBundle {
   expiryRule: string;
   authorId?: string;
   authorName?: string;
+  projectId?: string;
   viewCount: number;
   isPermanent: boolean;
 }
@@ -64,6 +65,7 @@ interface PreviewRow {
   expiry_rule: string;
   author_id: string | null;
   author_name: string | null;
+  project_id: string | null;
   view_count: number;
   is_permanent: boolean;
 }
@@ -80,6 +82,7 @@ function rowToBundle(row: PreviewRow): StoredPreviewBundle {
     expiryRule: row.expiry_rule,
     authorId: row.author_id ?? undefined,
     authorName: row.author_name ?? undefined,
+    projectId: row.project_id ?? undefined,
     viewCount: row.view_count,
     isPermanent: row.is_permanent,
   };
@@ -89,11 +92,12 @@ export async function insertPreview(bundle: StoredPreviewBundle): Promise<void> 
   await sql`
     INSERT INTO previews (
       id, title, html, css, js, created_at, expires_at, expiry_rule,
-      author_id, author_name, view_count, is_permanent
+      author_id, author_name, project_id, view_count, is_permanent
     ) VALUES (
       ${bundle.id}, ${bundle.title}, ${bundle.html}, ${bundle.css}, ${bundle.js},
       ${bundle.createdAt}, ${bundle.expiresAt}, ${bundle.expiryRule},
-      ${bundle.authorId ?? null}, ${bundle.authorName ?? null}, ${bundle.viewCount}, ${bundle.isPermanent}
+      ${bundle.authorId ?? null}, ${bundle.authorName ?? null}, ${bundle.projectId ?? null},
+      ${bundle.viewCount}, ${bundle.isPermanent}
     )
   `;
 }

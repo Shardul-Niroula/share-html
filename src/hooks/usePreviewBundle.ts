@@ -29,6 +29,33 @@ export function usePreviewBundle() {
     }
   }, []);
 
+  const isPreviewStillValid = (bundle: PreviewBundle) =>
+    bundle.isPermanent || bundle.expiresAt === null || bundle.expiresAt > Date.now();
+
+  // Restore the previously generated link for a project when switching back
+  // to it (permanent or not-yet-expired links only), otherwise show nothing.
+  // Also prunes any now-expired links out of local storage while at it.
+  const syncBundleForProject = useCallback((projectId: string) => {
+    const all = StorageService.getMyGeneratedPreviews();
+    const stillValid = all.filter(isPreviewStillValid);
+    if (stillValid.length !== all.length) {
+      StorageService.setGeneratedPreviews(stillValid);
+      setMyPreviews(stillValid);
+    }
+
+    const match = stillValid
+      .filter((b) => b.projectId === projectId)
+      .sort((a, b) => b.createdAt - a.createdAt)[0];
+
+    if (match) {
+      setActiveBundle(match);
+      setGeneratedUrl(`/preview/${match.id}`);
+    } else {
+      setActiveBundle(null);
+      setGeneratedUrl(null);
+    }
+  }, []);
+
   const revokePreview = useCallback(async (id: string, authorId?: string) => {
     const ok = await ApiService.deletePreview(id, authorId);
     if (ok) {
@@ -57,6 +84,7 @@ export function usePreviewBundle() {
     generatePreview,
     revokePreview,
     refreshMyPreviews,
+    syncBundleForProject,
     clearActiveBundle: () => {
       setActiveBundle(null);
       setGeneratedUrl(null);

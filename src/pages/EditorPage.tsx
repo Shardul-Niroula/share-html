@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { EditorPane } from '../components/EditorPane';
 import { PreviewPane } from '../components/PreviewPane';
@@ -42,8 +42,15 @@ export const EditorPage: React.FC = () => {
     myPreviews,
     generatePreview,
     revokePreview,
-    clearActiveBundle,
+    syncBundleForProject,
   } = usePreviewBundle();
+
+  // Whenever the active project changes (new project, loaded project,
+  // applied template), show that project's own previously generated
+  // preview link if one still exists and hasn't expired, or nothing.
+  useEffect(() => {
+    syncBundleForProject(project.id);
+  }, [project.id, syncBundleForProject]);
 
   // Modals state
   const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -83,13 +90,7 @@ export const EditorPage: React.FC = () => {
       showToast(`Project "${project.title}" saved before creating a new one`, 'info');
     }
     createNewProject();
-    clearActiveBundle();
     showToast('Created a new HTML/CSS/JS project', 'success');
-  };
-
-  const handleLoadProject = (targetProject: typeof project) => {
-    loadProject(targetProject);
-    clearActiveBundle();
   };
 
   const handleOpenShare = () => {
@@ -120,6 +121,7 @@ export const EditorPage: React.FC = () => {
       customExpiryTimestamp,
       authorId: user?.id,
       authorName: user?.name,
+      projectId: project.id,
     });
   };
 
@@ -239,7 +241,7 @@ export const EditorPage: React.FC = () => {
         onClose={() => setSnippetsDrawerOpen(false)}
         savedProjects={savedProjects}
         currentProjectId={project.id}
-        onLoadProject={handleLoadProject}
+        onLoadProject={loadProject}
         onNewProject={handleNewProject}
         onDeleteProject={deleteProject}
         myPreviews={myPreviews}
@@ -268,10 +270,7 @@ export const EditorPage: React.FC = () => {
       <TemplatesModal
         isOpen={templatesModalOpen}
         onClose={() => setTemplatesModalOpen(false)}
-        onSelectTemplate={(template) => {
-          loadTemplate(template);
-          clearActiveBundle();
-        }}
+        onSelectTemplate={loadTemplate}
         onShowToast={showToast}
       />
 

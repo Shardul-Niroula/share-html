@@ -9,6 +9,7 @@ export interface CreatePreviewPayload {
   customExpiryTimestamp?: number;
   authorId?: string;
   authorName?: string;
+  projectId?: string;
 }
 
 export interface CreatePreviewResponse {

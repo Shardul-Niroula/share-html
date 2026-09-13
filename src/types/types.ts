@@ -23,6 +23,7 @@ export interface PreviewBundle {
   expiryRule: ExpiryRule;
   authorId?: string;
   authorName?: string;
+  projectId?: string;
   viewCount: number;
   isPermanent: boolean;
   isExpired?: boolean;

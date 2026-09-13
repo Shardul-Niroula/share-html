@@ -62,7 +62,7 @@ app.get('/api/health', async (req, res) => {
 // Create new preview bundle
 app.post('/api/previews', rateLimitMiddleware, async (req, res) => {
   try {
-    const { title, html, css, js, expiryRule, customExpiryTimestamp, authorId, authorName } = req.body;
+    const { title, html, css, js, expiryRule, customExpiryTimestamp, authorId, authorName, projectId } = req.body;
 
     if (html === undefined || css === undefined || js === undefined) {
       return res.status(400).json({ error: 'Code fields (html, css, js) are required.' });
@@ -111,6 +111,7 @@ app.post('/api/previews', rateLimitMiddleware, async (req, res) => {
       expiryRule: expiryRule || '3_days',
       authorId: authorId ? String(authorId) : undefined,
       authorName: authorName ? String(authorName) : undefined,
+      projectId: projectId ? String(projectId) : undefined,
       viewCount: 0,
       isPermanent,
     };

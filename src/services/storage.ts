@@ -104,5 +104,11 @@ export const StorageService = {
     try {
       localStorage.setItem(STORAGE_KEYS.GENERATED_PREVIEWS, JSON.stringify(list));
     } catch (e) {}
+  },
+
+  setGeneratedPreviews(list: PreviewBundle[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.GENERATED_PREVIEWS, JSON.stringify(list));
+    } catch (e) {}
   }
 };
