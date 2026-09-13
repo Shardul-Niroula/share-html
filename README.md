@@ -17,9 +17,9 @@ Write and preview HTML, CSS, and JS code in an isolated sandbox, with instant sh
 ## Project structure
 
 - `src/` — the Vite + React frontend.
-- `api/app.ts` — the Express API (routes for creating/fetching/revoking preview links). Shared by both local dev and the Vercel deployment.
-- `api/index.ts` — the entry point Vercel picks up as a serverless function, handling all `/api/*` requests.
-- `api/db.ts` — Postgres data access layer (`@neondatabase/serverless`).
+- `lib/app.ts` — the Express API (routes for creating/fetching/revoking preview links). Shared by both local dev and the Vercel deployment. Deliberately lives outside `api/`: Vercel turns every file directly inside `api/` into its own separate serverless function, so shared modules imported by the function entry point have to sit elsewhere or they get isolated into their own (broken) function bundles.
+- `api/index.ts` — the entry point Vercel picks up as a serverless function, handling all `/api/*` requests. Just re-exports `lib/app.ts`.
+- `lib/db.ts` — Postgres data access layer (`@neondatabase/serverless`).
 - `server.ts` — local dev / self-hosted server only. Mounts the same API app and serves the Vite app (dev middleware, or `dist/` in production). Not used by Vercel.
 - `scripts/init-db.ts` — creates the `previews` table.
 

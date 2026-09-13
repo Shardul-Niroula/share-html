@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import apiApp from './api/app';
+import apiApp from './lib/app';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
