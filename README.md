@@ -8,7 +8,7 @@ Write and preview HTML, CSS, and JS code in an isolated sandbox, with instant sh
 
 1. Install dependencies:
    `npm install`
-2. Copy `.env.example` to `.env` and set `DATABASE_URL` to your Postgres connection string.
+2. Copy `.env.example` to `.env`. If you connected Postgres via Vercel's Storage tab, its variables (however they're named — see [Database setup](#database-setup)) are enough; otherwise set `DATABASE_URL` yourself.
 3. Create the database schema (one-time):
    `npm run db:init`
 4. Run the app:
@@ -33,7 +33,7 @@ This project is set up to deploy on Vercel with zero extra config:
 Steps:
 
 1. Push this repo to GitHub (already done) and [import it into Vercel](https://vercel.com/new).
-2. Connect a Postgres database (see below) **before your first deploy** so `DATABASE_URL` is set.
+2. Connect a Postgres database (see below) **before your first deploy** so a connection string is available in the environment.
 3. Deploy. Vercel will run `vite build` for the frontend and deploy `api/index.ts` as a Vercel Function.
 
 You can also deploy from the CLI:
@@ -41,7 +41,7 @@ You can also deploy from the CLI:
 ```bash
 npm i -g vercel
 vercel link
-vercel env pull   # pulls DATABASE_URL and other project env vars into .env.local
+vercel env pull   # pulls your project's env vars into .env.local
 vercel deploy
 ```
 
@@ -56,14 +56,13 @@ Vercel no longer offers its own hosted "Vercel Postgres" product directly — as
 3. Choose "Create New Neon Account" (or connect an existing one), pick a region, and name the database.
 4. On the "Connect Project" step, select this project and the environments you want it available in (Production, Preview, Development are all recommended).
 5. Optionally enable **Preview Branching** under Advanced Options, so every preview deployment gets its own database branch.
-6. Click **Connect**. Vercel automatically injects these environment variables into your project:
-   - `DATABASE_URL` — pooled connection string (use this one; the app is already configured to read it)
-   - `DATABASE_URL_UNPOOLED` — direct connection string
-   - `PGHOST`, `PGUSER`, `PGDATABASE`, `PGPASSWORD` — individual connection pieces, if you need them
+6. Click **Connect**.
+
+**A note on variable names:** depending on how the integration is connected, Vercel may inject a plain `DATABASE_URL` / `POSTGRES_URL`, or — if an "Environment Variable Prefix" was set — a project-prefixed name instead (e.g. `myproject_POSTGRES_URL`, `myproject_DATABASE_URL_UNPOOLED`). `lib/db.ts` doesn't assume either way: it checks for the plain names first, then scans for any variable ending in a recognized suffix (`_DATABASE_URL`, `_POSTGRES_URL`, `_POSTGRES_PRISMA_URL`, `_PGDATABASE`, `_DATABASE_URL_UNPOOLED`, `_POSTGRES_URL_NON_POOLING`) whose value looks like a real `postgres://` connection string, preferring pooled connections. So however your integration named things, it should just work — no dashboard renaming required.
 
 ### 2. Create the schema
 
-The `previews` table needs to exist before the API can read/write. Run this once, from your machine, with `DATABASE_URL` set (either pulled via `vercel env pull` or pasted into `.env`):
+The `previews` table needs to exist before the API can read/write. Run this once, from your machine, with your Postgres env vars present (either pulled via `vercel env pull` or pasted into `.env`):
 
 ```bash
 npm run db:init
@@ -75,7 +74,7 @@ This is idempotent (`CREATE TABLE IF NOT EXISTS`), so it's safe to re-run.
 
 ```bash
 vercel link      # connect this folder to your Vercel project (one-time)
-vercel env pull   # writes .env.local with DATABASE_URL etc.
+vercel env pull   # writes .env.local with your Postgres env vars
 npm run dev
 ```
 

@@ -1,12 +1,42 @@
 import { neon } from '@neondatabase/serverless';
 
-if (!process.env.DATABASE_URL) {
+// Some Vercel Postgres integrations (e.g. Neon connected with a custom
+// "Environment Variable Prefix") inject the connection string under a
+// project-prefixed name like "<prefix>_POSTGRES_URL" instead of a plain
+// DATABASE_URL. Since the prefix is project-specific, discover it by
+// scanning for the first plausible match rather than hardcoding it.
+function isConnectionString(value: string | undefined): value is string {
+  return !!value && /^postgres(ql)?:\/\//i.test(value);
+}
+
+function resolveDatabaseUrl(): string {
+  const env = process.env;
+
+  if (isConnectionString(env.DATABASE_URL)) return env.DATABASE_URL;
+  if (isConnectionString(env.POSTGRES_URL)) return env.POSTGRES_URL;
+
+  // Prefer pooled connection strings over unpooled ones (important for
+  // serverless, where many concurrent function instances share the pool).
+  const suffixesByPriority = [
+    '_DATABASE_URL',
+    '_POSTGRES_URL',
+    '_POSTGRES_PRISMA_URL',
+    '_PGDATABASE',
+    '_DATABASE_URL_UNPOOLED',
+    '_POSTGRES_URL_NON_POOLING',
+  ];
+
+  for (const suffix of suffixesByPriority) {
+    const matchingKey = Object.keys(env).find((key) => key.endsWith(suffix) && isConnectionString(env[key]));
+    if (matchingKey) return env[matchingKey] as string;
+  }
+
   throw new Error(
-    'DATABASE_URL is not set. Connect a Postgres database to this project (see README) and set DATABASE_URL in your environment.'
+    'No Postgres connection string found in environment. Connect a Postgres database to this project (see README) so DATABASE_URL, POSTGRES_URL, or a prefixed equivalent (e.g. <project>_POSTGRES_URL) is set.'
   );
 }
 
-export const sql = neon(process.env.DATABASE_URL);
+export const sql = neon(resolveDatabaseUrl());
 
 export interface StoredPreviewBundle {
   id: string;
