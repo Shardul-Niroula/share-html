@@ -9,6 +9,7 @@ import {
   getPreviewsByAuthor,
   countActivePreviews,
 } from './db.js';
+import { buildSandboxedDocument } from '../src/services/sanitizer.js';
 
 const app = express();
 
@@ -202,6 +203,85 @@ app.get('/api/user/:userId/previews', async (req, res) => {
   } catch (err: any) {
     console.error('Error fetching user previews:', err);
     res.status(500).json({ error: 'Failed to fetch previews.' });
+  }
+});
+
+// ================= STANDALONE PREVIEW PAGES =================
+
+// Serves a shared preview link as a real top-level HTML document instead of
+// mounting it inside the SPA's iframe. Rendering it inside the SPA meant any
+// real navigation from the pasted page (a link, a form submit) resolved
+// against the SPA's own /preview/:id route and got caught by Vercel's SPA
+// catch-all rewrite, reloading the whole app inside the iframe and leaving
+// the pasted content unreachable afterward. Serving it directly here makes
+// the browser tab itself the pasted page, matching how "open in new tab"
+// already behaves via a blob URL.
+function renderPreviewInfoPage(status: 'not-found' | 'expired' | 'error', title: string, message: string, previewId: string): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title} · ShareHtml</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0f0f13; color:#f2f2f5; font-family: system-ui, -apple-system, sans-serif; padding: 24px; }
+  .card { max-width: 440px; padding: 32px; text-align: center; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  p { color: #a1a1aa; line-height: 1.5; margin: 0 0 20px; }
+  .meta { font-size: 12px; color: #71717a; margin: 0 0 24px; }
+  a { display:inline-block; padding:10px 20px; border-radius:8px; background:#6366f1; color:#fff; text-decoration:none; font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>${title}</h1>
+    <p>${message}</p>
+    <div class="meta">Link ID: ${previewId}</div>
+    <a href="/">Create Your Own Sandbox</a>
+  </div>
+</body>
+</html>`;
+}
+
+app.get('/preview/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const bundle = await getPreview(id);
+
+    if (!bundle) {
+      res.status(404).type('html').send(renderPreviewInfoPage(
+        'not-found',
+        'Preview Unavailable',
+        'The requested preview link does not exist or has been removed.',
+        id
+      ));
+      return;
+    }
+
+    if (!bundle.isPermanent && bundle.expiresAt && Date.now() > bundle.expiresAt) {
+      res.status(410).type('html').send(renderPreviewInfoPage(
+        'expired',
+        'Preview Expired',
+        'The creator configured an expiration rule for this snippet, and its active sharing window has elapsed.',
+        id
+      ));
+      return;
+    }
+
+    await incrementViewCount(id);
+
+    const sandboxedHtml = buildSandboxedDocument(bundle.html, bundle.css, bundle.js);
+    res.status(200).type('html').send(sandboxedHtml);
+  } catch (err: any) {
+    console.error('Error rendering standalone preview page:', err);
+    res.status(500).type('html').send(renderPreviewInfoPage(
+      'error',
+      'Something Went Wrong',
+      'Failed to load this preview. Please try again later.',
+      id
+    ));
   }
 });
 
